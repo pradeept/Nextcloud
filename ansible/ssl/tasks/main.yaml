@@ -1,0 +1,31 @@
+- name: Install certbot
+  apt: 
+    pkg:
+      - certbot 
+      - python3-certbot-nginx
+
+- name: Add virtual host for nginx 
+  ansible.builtin.copy: 
+    src: nextcloud
+    dest: /etc/nginx/sites-available/nextcloud
+
+- name: Check if the symbolic link exists
+  stat:
+    path: /etc/nginx/sites-enabled/nextcloud
+  register: nextcloud_symlink
+
+- name: Enable above host entry
+  shell: ln -s /etc/nginx/sites-available/nextcloud /etc/nginx/sites-enabled/
+  when: not nextcloud_symlink.stat.exists
+
+- name: Test nginx configuration
+  shell: nginx -t 
+
+- name: Restart nginx
+  service:
+    name: nginx
+    state: restarted
+
+- name: Add SSL certificate
+  command: "certbot --nginx --non-interactive --agree-tos -m devops@sirpi.io -d nextcloud.sirpi.co.in"
+

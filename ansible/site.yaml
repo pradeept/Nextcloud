@@ -1,0 +1,10 @@
+---
+
+- hosts: all
+  user: root 
+  roles:
+    - setup
+    - ssl
+    - firewall
+    # - backup
+    

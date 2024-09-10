@@ -1,0 +1,27 @@
+- name: Create firewall
+  community.digitalocean.digital_ocean_firewall:
+    oauth_token: "{{ do_pat }}"
+    name: nextcloud-firewall
+    state: present
+
+    inbound_rules:
+      - protocol: "tcp"
+        ports: "22"
+        sources:
+          addresses: ["13.127.106.156/32"]
+      - protocol: "tcp"
+        ports: "443"
+        sources:
+          addresses: ["13.127.106.156/32"]
+      - protocol: "tcp"
+        ports: "80"
+        sources:
+          addresses: ["13.127.106.156/32"]
+
+    outbound_rules:
+      - protocol: "tcp"
+        ports: "1-65535"
+        destinations:
+          addresses: ["0.0.0.0/0", "::/0"]
+
+    droplet_ids: ["{{ droplet_id }}"]

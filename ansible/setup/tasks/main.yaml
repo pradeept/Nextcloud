@@ -1,0 +1,72 @@
+- name: Create user nextcloud
+  user:
+    name: nextcloud
+    groups: root
+    state: present
+
+- name: Update cache
+  apt :
+    update_cache: yes
+
+- name: Install requirements
+  apt :
+    pkg:
+      - ca-certificates 
+      - curl
+      - python3-pip
+
+- name: Add repo to APT source
+  shell: | 
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && \
+    chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |  \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null 
+
+- name: Update cache
+  apt :
+    update_cache: yes
+
+- name: Install docker and docker compose
+  apt:
+    pkg:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io 
+      - docker-buildx-plugin 
+      - docker-compose-plugin
+    state: present
+
+- name: Make sure destination dir exists
+  file:
+    path: "/root/nextcloud"
+    state: directory
+
+- name: Copy docker-compose file
+  ansible.builtin.copy:
+    src: docker-compose.yaml
+    dest: /root/nextcloud/docker-compose.yaml
+    force: true
+
+- name: Install Docker Python SDK
+  apt:
+    name: python3-docker
+    state: present
+
+- name: Check docker service
+  service:
+    name: docker
+    state: started 
+
+# - name: Run docker compose
+#   docker_compose:
+#     project_src: /root/nextcloud
+#     state: present
+#     build: yes
+#     debug: yes
+
+- name: Run docker compose
+  shell: docker compose -f /root/nextcloud/docker-compose.yaml up -d 
+      
+

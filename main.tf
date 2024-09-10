@@ -32,7 +32,7 @@ resource "digitalocean_droplet" "server-instance" {
 # }
 
 resource "digitalocean_record" "nextcloud-domain-mapping" {
-  domain = "sirpi.co.in"
+  domain = "abc.com"
   type   = "A"
   name   = var.subdomain_name
   value  = digitalocean_droplet.server-instance.ipv4_address

@@ -21,7 +21,7 @@ data_dir='/media/external/CloudDATA'
 # MySQL/MariaDB Database credentials
 db_host='localhost'
 db_user='nextcloud'
-db_pass='hai8paeJop+ohL}uzoo1'
+db_pass='<pass-goes-here>'
 db_name='nextcloud'
 
 

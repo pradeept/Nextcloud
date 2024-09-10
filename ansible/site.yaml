@@ -6,5 +6,5 @@
     - setup
     - ssl
     - firewall
-    # - backup
+    - backup
     
